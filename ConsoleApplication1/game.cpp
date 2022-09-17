@@ -6,8 +6,6 @@
 #include <chrono>
 #include <string>
 
-
-
 using namespace std;
 
 #define delay 0
@@ -22,16 +20,15 @@ string write_line(const string*, const short int);
 int value(const string, const short int);
 string write(const string, const short int);
 float roundoff(float, unsigned char);
-void delete_line_held(short int n);
-int value_held(string path, const short int n);
+void delete_line_held(short int);
+int value_held(string path, const short int);
+bool exists_test(const string);
 
 class player {
 public:
     float gain = 0, m_earned = 0, money_p = -1;
     unsigned short int level = 1, day = 1;
     string name_p = "unspecified", difficulty = "unspecified";
-
-
 
     void money(const float n, const char l) {
         if (l == '+') {
@@ -132,11 +129,18 @@ int main() {
             //Sleep       (delay);
             break;
         }
-        else if (inp == 2) {
-            load_game(&p);
-            cout << "Yuklenme tamamlandi." << endl;
-            //Sleep       (delay);
-            break;
+        else if (inp == 2 ) {
+            if (exists_test(R"(data\\save_data.txt)")) {
+                load_game(&p);
+                cout << "Yuklenme tamamlandi." << endl;
+                //Sleep       (delay);           
+                break;
+                
+            }
+            else {
+                cout << "No save data." << endl;
+                continue;
+            }
         }
         else if (inp == 3) {
             delete_save();
@@ -225,11 +229,11 @@ int main() {
 
         cout << p.day << ". gun bitti.---\n";
         //Sleep       (2 / 3);
-        cout << "Devam etmek icin = 'D', Kaydetip cikmak icin = 'Q':";
+        cout << "To resume = 'P', To save & quit = 'Q', To get retired = 'R': ";
         cin >> in;
         ++p.day;
         while (true) {
-            if (in == 'D' || in == 'd') break;
+            if (in == 'P' || in == 'p') break;
             else if (in == 'q' || in == 'Q') {
                 save_game(&p);
                 held.close();
@@ -237,9 +241,18 @@ int main() {
                 //Sleep       (2 / 3);
                 return 0;
             }
+            else if (in == 'R' || in == 'r') {
+                cout << "\n----------------------\n";
+                cout << "Your journey ends here.\nYou have earned " << p.gain << "$ and played " << p.day << " days since you started."<<endl;
+                
+                cout << "You can start a new game anytime if you want.";
+                cout << "\n----------------------\n";
+                delete_save();
+                return 0;
+            }
             else {
-                cout << "Yanlis girdi.\n";
-                cout << "Devam etmek icin = 'D', Kaydetip cikmak icin = 'Q':";
+                cout << "Wrong inpýt.\n";
+                cout << "To resume = 'P', To save & quit = 'Q', To get retired = 'R': ";
                 cin >> in;
             }
         } // Oyun devamlýlýðýný saðlayan girdi
@@ -341,4 +354,15 @@ void delete_line_held(short int n) {
 int value_held(string path, const short int n) {
     path = write_line(&path, n);
     return stoi(path.substr(path.find(':') + 1, path.find('-')));
+}
+bool exists_test(const string path) {
+    ifstream ifile;
+    ifile.open(path);
+    if (ifile) {
+        ifile.close();
+        return true;
+    }
+    else {
+        return false;
+    }
 }

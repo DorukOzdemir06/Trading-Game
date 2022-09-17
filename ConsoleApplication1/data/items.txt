@@ -1,14 +1,13 @@
-Akilli saat:3
-Tuvalet kagidi:1
-Altin saat:5
-Klarnet:3
-Telefon:4
-Elmas:6
-Defter:1
-Kalem:1
-Kumanda:1
-Masa:3
+Smart watch:3
+Toilet paper:1
+golden hour:5
+Clarinet:3
+Phone:4
+Diamond:6
+Notebook:1
+Remote:1
+Table:3
 Mouse:2
-Klavye:2
-Bilgisayar:4
-Klima:4
+Keyboard:2
+Computer:4
+Air Conditioning:4
