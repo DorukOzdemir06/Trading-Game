@@ -45,8 +45,8 @@ public:
         }
     }
     float guess(const unsigned short int mult) {
-        if (fif()) return reel_price(gain, mult) - (reel_price(gain, mult) * (level / 10.0));
-        else return reel_price(gain, mult) + (reel_price(gain, mult) * (level / 10.0));
+        if (fif()) return abs(reel_price(gain, mult) - (reel_price(gain, mult) * (level / 10.0)));
+        else return abs(reel_price(gain, mult) + (reel_price(gain, mult) * (level / 10.0)));
     }
     string find_price(string path, const short int n) {
         path = write_line(&path, n);
@@ -82,49 +82,49 @@ void load_game(player*);
 int main() {
     srand(time(NULL));
     player p;
-    cout << "<----------- Oyuna Hos Geldiniz ------------>\n";
-    cout << " | 1-) Yeni oyuna basla(Eski kayit silinir)|\n";
-    cout << " | 2-) Oyuna devam et                      |\n";
-    cout << " | 3-) Kayitli veriyi sil                  |\n";
-    cout << " | 4-) Oyunu sonlandir.                    |\n";
-    cout << "<------------------------------------------->\n";
+    cout << "<----------- Welcome to the game ------------->\n";
+    cout << " | 1-) Start new game(deletes old saved data)|\n";
+    cout << " | 2-) Resume game                           |\n";
+    cout << " | 3-) Delete saved data                     |\n";
+    cout << " | 4-) Close the game                        |\n";
+    cout << "<--------------------------------------------->\n";
     short inp;
     fstream held;
 
     while (true) {
-        cout << "Islem secin:";
+        cout << "Pick an action:";
         cin >> inp;
         if (inp == 1) {
             held.open(held_items, ios::out);
             held.close();
             cout << "------------------------\n";
             //Sleep       (delay);
-            cout << "Sehre yeni geldin ve al-sat dukkanini yeni actin, kar etmek icin yapman gereken cok basit.\n";
+            cout << "You just arrived in the city and started your trading shop. Your job is pretty easy.\n";
             //Sleep       (delay);
-            cout << "Gelen mallari musterilerden teklif ettigin ucrete al ve onlari yeni musterilere sat.\n";
+            cout << "Accept and Deny the offers to earn money.\n";
             //Sleep       (delay);
-            cout << "Seviyen arttikca musterilere mallarini istedigin fiyattan almak ve satmak kolaylasacak.\n<-->\n";
+            cout << "When you level up it is going to be easier to sell/buy the price that you want.\n<-->\n";
             //Sleep       (delay);
 
-            cout << "Bir ad belirleyin:";
+            cout << "Enter a name:";
             cin >> p.name_p;
 
             bool test;
             do {
-                cout << "Zorluk secin(Kolay, Normal, Zor):";
+                cout << "Select difficulty (Easy, Normal, Hard):";
                 cin >> p.difficulty;
                 transform(p.difficulty.begin(), p.difficulty.end(), p.difficulty.begin(), ::tolower);
                 test = false;
-                if (p.difficulty == "kolay") p.money_p = 2000;
+                if (p.difficulty == "easy") p.money_p = 2000;
                 else if (p.difficulty == "normal") p.money_p = 1000;
-                else if (p.difficulty == "zor") p.money_p = 500;
+                else if (p.difficulty == "hard") p.money_p = 500;
                 else {
                     test = true;
-                    cout << "Gecerli bir zorluk girin.\n";
+                    cout << "Select a valid diffculty.\n";
                 }
             } while (test);
 
-            cout << "\nHer gun dukkani 8'de acip 5'de kapatirsin. Makul fiyattan urunleri al ve sat.\n";
+            cout << "\nBuy and sell products at reasonable prices.\n";
             cout << "*****************************************\n";
             //Sleep       (delay);
             break;
@@ -132,93 +132,94 @@ int main() {
         else if (inp == 2 ) {
             if (exists_test(R"(data\\save_data.txt)")) {
                 load_game(&p);
-                cout << "Yuklenme tamamlandi." << endl;
+                cout << "Load succsesful." << endl;
                 //Sleep       (delay);           
                 break;
                 
             }
             else {
-                cout << "No save data." << endl;
+                cout << "No saved data." << endl;
                 continue;
             }
         }
         else if (inp == 3) {
             delete_save();
-            cout << "Verileriniz silindi." << endl;
+            cout << "Data deleted." << endl;
             continue;
         }
         else if (inp == 4) {
-            cout << "Oyun sonlandiriliyor...";
+            cout << "Quitting game...";
             //Sleep       (1);
             return 0;
         }
         else {
-            cout << "Yanlis girdi.\n";
+            cout << "Wrong input.\n";
             continue;
         }
-    } //Oyun baþlangýç menüsü.
+    } //Game start menu.
 
     char in;
     short time, random, random_held;
     float price;
 
-    cout << "Gelen teklifleri kabul etmek icin = 'K'" << endl;
-    cout << " Gelen teklifleri reddetmek icin  = 'R'" << endl;
-    cout << "         Gunu bitirmek icin       = 'B'" << endl;
+    cout << "          Accept the offer        = 'A'" << endl;
+    cout << "           Deny the offer         = 'D'" << endl;
+    cout << "              End day             = 'E'" << endl;
     cout << "-----------------------------------------" << endl;
     //Sleep       (delay);
 
     held.open(held_items, ios::app);
 
-    while (true) {   // Ana while döngüsü kullanýcý isteyene kadar oyunun devamýný saðlar
-        cout << p.day << ". gun basladi---\n";
+    while (true) {   // Main while loop it keeps loop until player wants opposite
+        cout <<"Day " << p.day << " started---\n";
         time = 0;
         //Sleep       (delay);
-        cout << "Guncel paraniz: " << p.money_p << " | Guncel seviyeniz: " << p.level << " | Toplam ettiginiz kar: " << p.gain << endl << endl;
+        cout << "Money: " << p.money_p << " | Level: " << p.level << " | Total gain: " << p.gain << endl << endl;
         held.seekg(0, ios::end);
 
-        while (time <= 240) { // Günlerin geçmesini saðlayan döngü
+        while (time <= 240) { // After 4 minutes day ends
             chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
             customer cus;
             random = rand() % line_count(&items);
             price = roundoff(abs(cus.guess(value(items, random), p.gain)), 2);
 
             if (fif()) {
-                cout << cus.name() << ", " << write(items, random) << "'i " << price << "'a $ satmak istiyor." << " Tahmin ettigin ucret: " << p.guess(
+                cout << cus.name() << " wants to sell " << write(items, random) << " for " << price << "$" << " Estimated price: " << p.guess(
                     value(items, random)) << endl;
-                cout << "Islem: ";
+                cout << "Action: ";
                 cin >> in;
 
-                if (in == 'K' || in == 'k') {
+                if (in == 'A' || in == 'a') {
                     if (p.money_p >= price) {
                         p.money(price, '-');
                         held << write_line(&items, random) << "-" << price << endl;
-                        cout << "Satin alim basarili, yeni bakiye: " << p.money_p << endl;
+                        cout << "Purchase successful, new balance: " << p.money_p << endl;
                     }
-                    else cout << "Paraniz yeterli degil.\n";
+                    else cout << "Your money isn't enough.\n";
                 }
-                else if (in == 'R' || in == 'r');
-                else if (in == 'B' || in == 'b') break;
-                else cout << "Yanlis giridi." << endl;
+                else if (in == 'D' || in == 'd');
+                else if (in == 'E' || in == 'e') break;
+                else cout << "Wrong input." << endl;
             }
 
             else if (!held.tellg() == 0) {
                 random_held = rand() % line_count(&held_items);
-                cout << cus.name() << ", " << write(held_items, random_held) << "'i " << p.find_price(held_items, random_held) << "'a $ almak istiyor."
-                    << " Tahmin ettigin ucret: " << p.guess(value_held(held_items, random_held)) << endl;
-                cout << "Islem: ";
+                price = roundoff(abs(cus.guess(value(held_items, random_held), p.gain)), 2);
+                cout << cus.name() << "wants to buy " << write(held_items, random_held) << " for " << price << "$"
+                    << " Price that you buy: " << p.find_price(held_items, random_held) << endl;
+                cout << "Action: ";
                 cin >> in;
 
-                if (in == 'K' || in == 'k') {
-                    p.money(stoi(p.find_price(held_items, random_held)), '+');
+                if (in == 'A' || in == 'a') {
+                    p.money(price, '+');
                     held.close();
                     delete_line_held(random_held);
-                    cout << "Satim basarili, yeni bakiye: " << p.money_p << endl;
+                    cout << "The sale is successful, new balance: " << p.money_p << endl;
                     held.open(held_items, ios::app);
                 }
-                else if (in == 'R' || in == 'r');
-                else if (in == 'B' || in == 'b') break;
-                else cout << "Yanlis giridi." << endl;
+                else if (in == 'D' || in == 'd');
+                else if (in == 'E' || in == 'e') break;
+                else cout << "Wrong input." << endl;
             }
 
             chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -227,7 +228,7 @@ int main() {
         }
 
 
-        cout << p.day << ". gun bitti.---\n";
+        cout<<"Day " << p.day << "is over---\n";
         //Sleep       (2 / 3);
         cout << "To resume = 'P', To save & quit = 'Q', To get retired = 'R': ";
         cin >> in;
@@ -237,31 +238,32 @@ int main() {
             else if (in == 'q' || in == 'Q') {
                 save_game(&p);
                 held.close();
-                cout << "Kayit basarili, cikis yapiliyor...";
+                cout << "Save successful. Closing game...";
                 //Sleep       (2 / 3);
                 return 0;
             }
             else if (in == 'R' || in == 'r') {
                 cout << "\n----------------------\n";
-                cout << "Your journey ends here.\nYou have earned " << p.gain << "$ and played " << p.day << " days since you started."<<endl;
-                
+                cout << "Your journey ends here.\nYour profit is " << p.gain << "$ and you have played " << p.day << " days since you started."<<endl;
+                cout << "You reached " << p.level << "level."<<endl;
                 cout << "You can start a new game anytime if you want.";
                 cout << "\n----------------------\n";
                 delete_save();
                 return 0;
             }
             else {
-                cout << "Wrong inpýt.\n";
+                cout << "Wrong input.\n";
                 cout << "To resume = 'P', To save & quit = 'Q', To get retired = 'R': ";
                 cin >> in;
             }
-        } // Oyun devamlýlýðýný saðlayan girdi
+        } // Buy-sell loop
         //Sleep       (delay);
 
     }
 
 }
 //-----------------------------------------------------------------------
+//Functions
 void save_game(player* cname) {
     fstream save;
     save.open(R"(data\\save_data.txt)", ios::out);
