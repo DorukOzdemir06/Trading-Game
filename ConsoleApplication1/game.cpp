@@ -7,11 +7,12 @@
 #include <string>
 
 
+
 using namespace std;
 
 #define delay 0
-const static string held_items = R"(C:\\Users\\baran\\Desktop\\game files\\held_items.txt)";
-const static string items = R"(C:\\Users\\baran\\Desktop\\game files\\items.txt)";
+const static string held_items = R"(data\\held_items.txt)";
+const static string items = R"(data\\items.txt)";
 
 float reel_price(float, short int);
 bool fif();
@@ -72,7 +73,7 @@ public:
     }
     string name() {
         string* ptr = new string;
-        *ptr = "C:\\Users\\baran\\Desktop\\game files\\names.txt";
+        *ptr = "data\\names.txt";
         short int random = rand() % line_count(ptr);
         return write_line(ptr, random);
     }
@@ -250,7 +251,7 @@ int main() {
 //-----------------------------------------------------------------------
 void save_game(player* cname) {
     fstream save;
-    save.open(R"(C:\\Users\\baran\\Desktop\\game files\\save_data.txt)", ios::out);
+    save.open(R"(data\\save_data.txt)", ios::out);
     save << "Money:" << cname->money_p << endl;
     save << "Name:" << cname->name_p << endl;
     save << "Difficulty:" << cname->difficulty << endl;
@@ -261,7 +262,7 @@ void save_game(player* cname) {
 }
 void load_game(player* cname) {
     fstream load;
-    load.open("C:\\Users\\baran\\Desktop\\game files\\save_data.txt", ios::in);
+    load.open("data\\save_data.txt", ios::in);
     if (load.is_open()) {
         string data[6];
         for (int i = 0; i < 6; ++i) {
@@ -277,8 +278,8 @@ void load_game(player* cname) {
     }
 }
 void delete_save() {
-    remove("C:\\Users\\baran\\Desktop\\game files\\save_data.txt");
-    remove("C:\\Users\\baran\\Desktop\\game files\\held_items.txt");
+    remove("data\\save_data.txt");
+    remove("data\\held_items.txt");
 }
 float reel_price(float earn, short int mult) {
     return mult * 50 + (earn / 3.0);
@@ -320,9 +321,9 @@ string write(const string path, const short int n) {
 }
 void delete_line_held(short int n) {
     fstream file;
-    file.open("C:\\Users\\baran\\Desktop\\game files\\held_items.txt", ios::in);
+    file.open("data\\held_items.txt", ios::in);
     fstream file2;
-    file2.open("C:\\Users\\baran\\Desktop\\game files\\temp.txt", ios::out);
+    file2.open("data\\temp.txt", ios::out);
     string s;
     for (int i = 0; i < line_count(&held_items); ++i) {
         getline(file, s);
@@ -333,8 +334,8 @@ void delete_line_held(short int n) {
     }
     file.close();
     file2.close();
-    remove("C:\\Users\\baran\\Desktop\\game files\\held_items.txt");
-    rename("C:\\Users\\baran\\Desktop\\game files\\temp.txt", "C:\\Users\\baran\\Desktop\\game files\\held_items.txt");
+    remove("data\\held_items.txt");
+    rename("data\\temp.txt", "data\\held_items.txt");
 
 }
 int value_held(string path, const short int n) {

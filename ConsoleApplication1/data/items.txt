@@ -1,0 +1,14 @@
+Akilli saat:3
+Tuvalet kagidi:1
+Altin saat:5
+Klarnet:3
+Telefon:4
+Elmas:6
+Defter:1
+Kalem:1
+Kumanda:1
+Masa:3
+Mouse:2
+Klavye:2
+Bilgisayar:4
+Klima:4
